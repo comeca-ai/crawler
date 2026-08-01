@@ -111,9 +111,9 @@ def parse_maispb(url='https://www.maispb.com.br'):
             img_url = None
 
         news.append({
-            'title': title,
-            'url': clean_url,
-            'image': img_url
+            'titulo': title,
+            'link': clean_url,
+            'imagem': img_url
         })
         seen_urls.add(clean_url)
 
@@ -121,11 +121,11 @@ def parse_maispb(url='https://www.maispb.com.br'):
 
 def main():
     print("Starting scraping process...")
-    os.makedirs('maispb', exist_ok=True)
+    os.makedirs(os.path.dirname(__file__), exist_ok=True)
     news_items = parse_maispb()
     print(f"Found {len(news_items)} news items")
 
-    output_path = os.path.join('maispb', 'noticias.json')
+    output_path = os.path.join(os.path.dirname(__file__), 'noticias.json')
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(news_items, f, ensure_ascii=False, indent=2)
 

@@ -100,9 +100,9 @@ def parse_portalcorreio(url='https://portalcorreio.com.br/'):
             img_url = f"https://portalcorreio.com.br{img_url}"
 
         news.append({
-            'title': title,
-            'url': clean_href,
-            'image': img_url
+            'titulo': title,
+            'link': clean_href,
+            'imagem': img_url
         })
         seen_urls.add(clean_href)
 
@@ -110,11 +110,11 @@ def parse_portalcorreio(url='https://portalcorreio.com.br/'):
 
 def main():
     print("Starting scraping process...")
-    os.makedirs('portalcorreio', exist_ok=True)
+    os.makedirs(os.path.dirname(__file__), exist_ok=True)
     news_items = parse_portalcorreio()
     print(f"Found {len(news_items)} news items")
 
-    output_path = os.path.join('portalcorreio', 'noticias.json')
+    output_path = os.path.join(os.path.dirname(__file__), 'noticias.json')
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(news_items, f, ensure_ascii=False, indent=2)
 
