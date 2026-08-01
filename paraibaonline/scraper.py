@@ -13,14 +13,14 @@ def parse_paraibaonline(url='https://paraibaonline.com.br/'):
     }
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
         html = response.text
     except Exception as e:
         print(f"Error fetching URL: {e}")
-        if os.path.exists('paraibaonline/index.html'):
+        if os.path.exists(os.path.join(os.path.dirname(__file__), 'index.html')):
             print("Using local cached file instead")
-            with open('paraibaonline/index.html', 'r', encoding='utf-8') as f:
+            with open(os.path.join(os.path.dirname(__file__), 'index.html'), 'r', encoding='utf-8') as f:
                 html = f.read()
         else:
             sys.exit(1)
@@ -90,10 +90,24 @@ def parse_paraibaonline(url='https://paraibaonline.com.br/'):
                             break
 
             if img and not img_url:
-                img_url = img.get('data-src') or img.get('data-lazy-src') or img.get('src')
+                img_url = img.get('data-src') or img.get('data-lazy-src') or img.get('src') or img.get('srcset')
+                if img_url and ',' in img_url:
+                    img_url = img_url.split(',')[0].split(' ')[0]
                 # Filter out empty placeholder images
-                if img_url and ('empty-img' in img_url or 'placeholder' in img_url):
+                if img_url and ('empty-img' in img_url or 'placeholder' in img_url or 'data:image' in img_url):
                     img_url = None
+
+        if not img_url:
+            # Fallback to fetching article page and og:image
+            try:
+                art_res = requests.get(clean_href, headers=headers, timeout=5)
+                if art_res.status_code == 200:
+                    art_soup = BeautifulSoup(art_res.text, 'html.parser')
+                    og_img = art_soup.find('meta', property='og:image')
+                    if og_img:
+                        img_url = og_img.get('content')
+            except Exception:
+                pass
 
         title = re.sub(r'\s+', ' ', title).strip()
 
@@ -103,22 +117,23 @@ def parse_paraibaonline(url='https://paraibaonline.com.br/'):
         if img_url and not img_url.startswith('http') and not img_url.startswith('data:'):
             img_url = f"https://paraibaonline.com.br{img_url}"
 
-        news.append({
-            'title': title,
-            'url': clean_href,
-            'image': img_url
-        })
-        seen_urls.add(clean_href)
+        if img_url:
+            news.append({
+                'titulo': title,
+                'link': clean_href,
+                'imagem': img_url
+            })
+            seen_urls.add(clean_href)
 
     return news
 
 def main():
     print("Starting scraping process...")
-    os.makedirs('paraibaonline', exist_ok=True)
+    os.makedirs(os.path.dirname(__file__), exist_ok=True)
     news_items = parse_paraibaonline()
     print(f"Found {len(news_items)} news items")
 
-    output_path = os.path.join('paraibaonline', 'noticias.json')
+    output_path = os.path.join(os.path.dirname(__file__), 'noticias.json')
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(news_items, f, ensure_ascii=False, indent=2)
 

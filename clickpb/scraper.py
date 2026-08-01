@@ -17,9 +17,9 @@ def parse_clickpb(url='https://www.clickpb.com.br/'):
         html = response.text
     except Exception as e:
         print(f"Error fetching URL: {e}")
-        if os.path.exists('clickpb/index.html'):
+        if os.path.exists(os.path.join(os.path.dirname(__file__), 'index.html')):
             print("Using local cached file instead")
-            with open('clickpb/index.html', 'r', encoding='utf-8') as f:
+            with open(os.path.join(os.path.dirname(__file__), 'index.html'), 'r', encoding='utf-8') as f:
                 html = f.read()
         else:
             sys.exit(1)
@@ -80,12 +80,35 @@ def parse_clickpb(url='https://www.clickpb.com.br/'):
             img_url = None
             img_tag = a.find('img')
 
+            if not img_tag:
+                # Often the title link doesn't have an image, but an adjacent link does
+                # Check parent context
+                parent = a.find_parent(['div', 'li', 'article'])
+                if parent:
+                    imgs = parent.find_all('img')
+                    if imgs:
+                        img_tag = imgs[0]
+
+                # Check prev/next siblings
+                if not img_tag:
+                    prev_a = a.find_previous_sibling('a', href=href)
+                    if prev_a and prev_a.find('img'):
+                        img_tag = prev_a.find('img')
+                    else:
+                        next_a = a.find_next_sibling('a', href=href)
+                        if next_a and next_a.find('img'):
+                            img_tag = next_a.find('img')
+
             if img_tag:
-                img_url = img_tag.get('src')
+                img_url = img_tag.get('src') or img_tag.get('srcset') or img_tag.get('data-src') or img_tag.get('data-lazy-src')
+
                 # Next.js image optimization handling
                 if img_url and '/_next/image?url=' in img_url:
                     # Extract the original URL from Next.js proxy format
                     try:
+                        # might be in srcset, get first URL
+                        if ',' in img_url:
+                            img_url = img_url.split(',')[0].split(' ')[0]
                         parsed = urllib.parse.urlparse(img_url)
                         query = urllib.parse.parse_qs(parsed.query)
                         if 'url' in query:
@@ -93,23 +116,17 @@ def parse_clickpb(url='https://www.clickpb.com.br/'):
                     except:
                         pass
 
-                if not img_url or img_url.endswith('.svg') or 'data:image' in img_url:
-                    img_url = img_tag.get('data-src') or img_tag.get('data-lazy-src') or img_url
-            else:
-                # Often the title link doesn't have an image, but an adjacent link does
-                next_a = a.find_next_sibling('a', href=href)
-                if next_a:
-                    img_tag = next_a.find('img')
-                    if img_tag:
-                        img_url = img_tag.get('src')
-                        if img_url and '/_next/image?url=' in img_url:
-                            try:
-                                parsed = urllib.parse.urlparse(img_url)
-                                query = urllib.parse.parse_qs(parsed.query)
-                                if 'url' in query:
-                                    img_url = query['url'][0]
-                            except:
-                                pass
+            # If still no image, try to fetch the article page to find og:image
+            if not img_url:
+                try:
+                    art_res = requests.get(full_url, headers=headers)
+                    if art_res.status_code == 200:
+                        art_soup = BeautifulSoup(art_res.text, 'html.parser')
+                        og_img = art_soup.find('meta', property='og:image')
+                        if og_img:
+                            img_url = og_img.get('content')
+                except Exception:
+                    pass
 
             if img_url and not img_url.startswith('http') and not img_url.startswith('data:'):
                 img_url = f"https://www.clickpb.com.br{img_url}"
@@ -117,22 +134,23 @@ def parse_clickpb(url='https://www.clickpb.com.br/'):
             if img_url and img_url.endswith('.svg'):
                 img_url = None
 
-            news.append({
-                'title': title,
-                'url': full_url,
-                'image': img_url
-            })
-            seen_urls.add(full_url)
+            if img_url:
+                news.append({
+                    'titulo': title,
+                    'link': full_url,
+                    'imagem': img_url
+                })
+                seen_urls.add(full_url)
 
     return news
 
 def main():
     print("Starting scraping process...")
-    os.makedirs('clickpb', exist_ok=True)
+    os.makedirs(os.path.dirname(__file__), exist_ok=True)
     news_items = parse_clickpb()
     print(f"Found {len(news_items)} news items")
 
-    output_path = os.path.join('clickpb', 'noticias.json')
+    output_path = os.path.join(os.path.dirname(__file__), 'noticias.json')
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(news_items, f, ensure_ascii=False, indent=2)
 
