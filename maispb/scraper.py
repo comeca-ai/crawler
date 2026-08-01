@@ -12,14 +12,14 @@ def parse_maispb(url='https://www.maispb.com.br'):
     }
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
         html = response.text
     except Exception as e:
         print(f"Error fetching URL: {e}")
-        if os.path.exists('maispb/index.html'):
+        if os.path.exists(os.path.join(os.path.dirname(__file__), 'index.html')):
             print("Using local cached file instead")
-            with open('maispb/index.html', 'r', encoding='utf-8') as f:
+            with open(os.path.join(os.path.dirname(__file__), 'index.html'), 'r', encoding='utf-8') as f:
                 html = f.read()
         else:
             sys.exit(1)
@@ -76,7 +76,7 @@ def parse_maispb(url='https://www.maispb.com.br'):
         # Strategy 1: Image inside 'a'
         img_tag = a.find('img')
         if img_tag:
-            img_url = img_tag.get('src') or img_tag.get('data-src')
+            img_url = img_tag.get('src') or img_tag.get('data-src') or img_tag.get('srcset')
 
         # Strategy 2: Image in parent wrapper
         if not img_url:
@@ -84,7 +84,7 @@ def parse_maispb(url='https://www.maispb.com.br'):
             if parent_div:
                 imgs = parent_div.find_all('img')
                 for img in imgs:
-                    src = img.get('src') or img.get('data-src')
+                    src = img.get('src') or img.get('data-src') or img.get('srcset')
                     if src and not 'pixel' in src.lower() and not src.endswith('.svg') and not src.endswith('.gif'):
                         img_url = src
                         break
@@ -95,14 +95,32 @@ def parse_maispb(url='https://www.maispb.com.br'):
             if prev:
                 img_prev = prev.find('img')
                 if img_prev:
-                    img_url = img_prev.get('src') or img_prev.get('data-src')
+                    img_url = img_prev.get('src') or img_prev.get('data-src') or img_prev.get('srcset')
 
             if not img_url:
                 next_a = a.find_next_sibling('a', href=href)
                 if next_a:
                     img_next = next_a.find('img')
                     if img_next:
-                        img_url = img_next.get('src') or img_next.get('data-src')
+                        img_url = img_next.get('src') or img_next.get('data-src') or img_next.get('srcset')
+
+        if img_url and ',' in img_url:
+            img_url = img_url.split(',')[0].split(' ')[0]
+
+        if img_url and ('data:image' in img_url or 'placeholder' in img_url):
+            img_url = None
+
+        # Fallback Strategy: Fetch og:image from the article URL
+        if not img_url:
+            try:
+                art_res = requests.get(clean_url, headers=headers, timeout=5)
+                if art_res.status_code == 200:
+                    art_soup = BeautifulSoup(art_res.text, 'html.parser')
+                    og_img = art_soup.find('meta', property='og:image')
+                    if og_img:
+                        img_url = og_img.get('content')
+            except Exception:
+                pass
 
         if img_url and not img_url.startswith('http') and not img_url.startswith('data:'):
             img_url = f"https://www.maispb.com.br{img_url}"
@@ -110,12 +128,13 @@ def parse_maispb(url='https://www.maispb.com.br'):
         if img_url and img_url.endswith('.svg'):
             img_url = None
 
-        news.append({
-            'titulo': title,
-            'link': clean_url,
-            'imagem': img_url
-        })
-        seen_urls.add(clean_url)
+        if img_url:
+            news.append({
+                'titulo': title,
+                'link': clean_url,
+                'imagem': img_url
+            })
+            seen_urls.add(clean_url)
 
     return news
 

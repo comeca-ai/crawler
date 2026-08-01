@@ -2,7 +2,7 @@
   {
     "titulo": "Loulu Gilberto, filha caçula de João Gilberto, lança 1º álbum e dispara nas plataformas",
     "link": "https://www.maispb.com.br/843364/loulu-gilberto-filha-cacula-de-joao-gilberto-lanca-1o-album-e-dispara-nas-plataformas.html",
-    "imagem": null
+    "imagem": "https://www.maispb.com.br/wp-content/uploads/2026/08/1500-x-780-2-1.png"
   },
   {
     "titulo": "Briga entre facções provoca princípio de rebelião em presídio de João Pessoa",
@@ -32,7 +32,12 @@
   {
     "titulo": "Após reunião, progressistas saem pregando vice ‘confiável que não crie problemas’",
     "link": "https://www.maispb.com.br/843252/barbosa-e-julian-saem-de-reuniao-do-pp-defendendo-um-vice-que-nao-crie-problema.html",
-    "imagem": null
+    "imagem": "https://www.maispb.com.br/wp-content/uploads/2026/07/POST-MATERIA-PORTAL_Easy-Resize.com_.jpg"
+  },
+  {
+    "titulo": "Jovem é encontrado morto com mãos amarradas em João Pessoa",
+    "link": "https://www.maispb.com.br/843405/jovem-e-encontrado-morto-com-maos-amarradas-em-joao-pessoa.html",
+    "imagem": "https://www.maispb.com.br/wp-content/uploads/2024/11/policia-militar-colete.avif"
   },
   {
     "titulo": "Oito câmeras clandestinas são retiradas durante operação em João Pessoa",
@@ -45,14 +50,14 @@
     "imagem": "https://www.maispb.com.br/wp-content/uploads/2026/08/caso-erick-araujo-480x250.png"
   },
   {
+    "titulo": "Casal é preso na Capital com mais de R$ 1 milhão em drogas",
+    "link": "https://www.maispb.com.br/843236/casal-e-preso-em-joao-pessoa-com-mais-de-r-1-milhao-em-drogas.html",
+    "imagem": "https://www.maispb.com.br/wp-content/uploads/2026/06/Central-de-Policia-Civil-800x450_Easy-Resize.com_.jpg"
+  },
+  {
     "titulo": "Celebra João Pessoa 2026 reúne fiéis na Praia de Tambaú neste sábado",
     "link": "https://www.maispb.com.br/843376/celebra-joao-pessoa-2026-reune-fieis-na-praia-de-tambau-neste-sabado.html",
     "imagem": "https://www.maispb.com.br/wp-content/uploads/2026/08/1500-x-780-3-1-480x250.png"
-  },
-  {
-    "titulo": "Casal é preso na Capital com mais de R$ 1 milhão em drogas",
-    "link": "https://www.maispb.com.br/843236/casal-e-preso-em-joao-pessoa-com-mais-de-r-1-milhao-em-drogas.html",
-    "imagem": null
   },
   {
     "titulo": "Tibério Limeira chama apoiadores para convenção da base governista em JP",
@@ -63,11 +68,6 @@
     "titulo": "Programação da Festa de Nossa Senhora da Assunção é divulgada",
     "link": "https://www.maispb.com.br/843352/programacao-da-festa-de-nossa-senhora-da-assuncao-e-divulgada.html",
     "imagem": "https://www.maispb.com.br/wp-content/uploads/2026/08/1500-x-780-3-480x250.png"
-  },
-  {
-    "titulo": "Homem é morto a tiros no bairro de Jaguaribe, em João Pessoa",
-    "link": "https://www.maispb.com.br/843348/homem-e-morto-a-tiros-no-bairro-de-jaguaribe-em-jp.html",
-    "imagem": "https://www.maispb.com.br/wp-content/uploads/2026/08/1500-x-780-2-480x250.png"
   },
   {
     "titulo": "Hiperconexão Crônica: Como os estímulos constantes afetam nossa saúde",
@@ -93,6 +93,11 @@
     "titulo": "Do PP, Tarcísio Jardim defende uma mulher na vice de Lucas",
     "link": "https://www.maispb.com.br/843361/do-pp-tarcisio-jardim-defende-uma-mulher-na-vice-de-lucas.html",
     "imagem": "https://www.maispb.com.br/wp-content/uploads/2026/08/1500-x-780-1-1-200x145.png"
+  },
+  {
+    "titulo": "Homem é morto a tiros no bairro de Jaguaribe, em João Pessoa",
+    "link": "https://www.maispb.com.br/843348/homem-e-morto-a-tiros-no-bairro-de-jaguaribe-em-jp.html",
+    "imagem": "https://www.maispb.com.br/wp-content/uploads/2026/08/1500-x-780-2-200x145.png"
   },
   {
     "titulo": "Neste sábado, na Usina Cultural Energisa dois shows do pernambucanos IVYSON, e o grupo olindense Academia da Berlinda",
@@ -153,10 +158,5 @@
     "titulo": "Homem é preso com 10 kg de crack avaliados em R$ 500 mil em Cajazeiras",
     "link": "https://www.maispb.com.br/843207/homem-e-preso-com-10-kg-de-crack-avaliados-em-r-500-mil-em-cajazeiras.html",
     "imagem": "https://www.maispb.com.br/wp-content/uploads/2026/07/1500-x-780-3-4-200x145.png"
-  },
-  {
-    "titulo": "Duas pessoas morrem em acidente entre carro e carreta na BR-230",
-    "link": "https://www.maispb.com.br/843199/duas-pessoas-morrem-em-acidente-entre-carro-e-carreta-na-br-230.html",
-    "imagem": "https://www.maispb.com.br/wp-content/uploads/2026/07/1500-x-780-2-4-200x145.png"
   }
 ]
