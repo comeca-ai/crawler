@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import os
 import sys
+import urllib.parse
 
 def parse_clickpb(url='https://www.clickpb.com.br/'):
     print(f"Fetching {url}")
@@ -85,7 +86,6 @@ def parse_clickpb(url='https://www.clickpb.com.br/'):
                 if img_url and '/_next/image?url=' in img_url:
                     # Extract the original URL from Next.js proxy format
                     try:
-                        import urllib.parse
                         parsed = urllib.parse.urlparse(img_url)
                         query = urllib.parse.parse_qs(parsed.query)
                         if 'url' in query:
@@ -104,7 +104,6 @@ def parse_clickpb(url='https://www.clickpb.com.br/'):
                         img_url = img_tag.get('src')
                         if img_url and '/_next/image?url=' in img_url:
                             try:
-                                import urllib.parse
                                 parsed = urllib.parse.urlparse(img_url)
                                 query = urllib.parse.parse_qs(parsed.query)
                                 if 'url' in query:
